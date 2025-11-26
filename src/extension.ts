@@ -67,7 +67,7 @@ function paintDuplicatedValues(currentDuplicatedValues: Row[]) {
 
 export function activate(context: vscode.ExtensionContext) {
   let disposable = vscode.commands.registerCommand(
-    "jasonlint",
+    "json-i18n-val-check.jsonI18n",
     () => {
       if (vscode.window.activeTextEditor?.document.languageId === "json") {
         const json = vscode.window.activeTextEditor?.document.getText();
@@ -82,7 +82,7 @@ export function activate(context: vscode.ExtensionContext) {
           if (duplicatedValues.length > 0) {
             if (!alertShowed) {
               vscode.window.showErrorMessage(
-                "JASON Lint: Duplicated values detected."
+                "json-i18n-val-check.jsonI18n: Duplicated values detected."
               );
 
               alertShowed = true;
@@ -95,26 +95,26 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  vscode.commands.executeCommand("jasonlint");
+  vscode.commands.executeCommand("json-i18n-val-check.jsonI18n");
 
   vscode.workspace.onDidSaveTextDocument(() => {
-    vscode.commands.executeCommand("jasonlint");
+    vscode.commands.executeCommand("json-i18n-val-check.jsonI18n");
   });
 
   vscode.workspace.onDidChangeTextDocument(() => {
-    vscode.commands.executeCommand("jasonlint");
+    vscode.commands.executeCommand("json-i18n-val-check.jsonI18n");
   });
 
   vscode.workspace.onDidCreateFiles(() => {
-    vscode.commands.executeCommand("jasonlint");
+    vscode.commands.executeCommand("json-i18n-val-check.jsonI18n");
   });
 
   vscode.workspace.onDidRenameFiles(() => {
-    vscode.commands.executeCommand("jasonlint");
+    vscode.commands.executeCommand("json-i18n-val-check.jsonI18n");
   });
 
   vscode.window.onDidChangeActiveTextEditor(() => {
-    vscode.commands.executeCommand("jasonlint");
+    vscode.commands.executeCommand("json-i18n-val-check.jsonI18n");
   });
 
   context.subscriptions.push(disposable);

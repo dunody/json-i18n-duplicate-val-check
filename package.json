@@ -1,8 +1,8 @@
 {
-  "name": "jason-lint",
-  "displayName": "JASON Lint",
-  "description": "Find duplicate object values of your JSON files",
-  "version": "1.0.1",
+  "name": "json-i18n-val-check",
+  "displayName": "JSON - Duplicate Val Check",
+  "description": "A JSON linter extension that helps to find duplicate object values of your JSON files",
+  "version": "1.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/LeonardoPizzoquero/jason-lint"
@@ -15,16 +15,25 @@
     "Linters"
   ],
   "activationEvents": [
-    "onCommand:jason-lint.jasonLint",
+    "onCommand:json-i18n-val-check.jsonI18n",
     "onLanguage:json"
   ],
   "main": "./out/extension.js",
-  "publisher": "LeoPizzoquero",
+  "publisher": "dyPrivateExt",
+  "author": {
+    "name": "LeoPizzoquero"
+  },
+  "contributors": [
+    {
+      "name": "Dun Yi",
+      "email": "dunody@gmail.com"
+    }
+  ],
   "contributes": {
     "commands": [
       {
-        "command": "jason-lint.jasonLint",
-        "title": "JASON Lint"
+        "command": "json-i18n-val-check.jsonI18n",
+        "title": "JSON i18n: Check JSON Duplicate Value"
       }
     ]
   },
