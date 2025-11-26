@@ -1,105 +1,123 @@
-import * as vscode from 'vscode';
+import * as vscode from "vscode";
 
 type Row = {
-	value: string;
-	index: number;
-	count: number;
+  value: string;
+  index: number;
+  count: number;
 };
 
 const currentDuplicatedDecorations: vscode.TextEditorDecorationType[] = [];
 let alertShowed = false;
 
 function getDuplicatedValues(values: string[]) {
-		return values.map((value, index) => ({
-			value,
-			index,
-			count: values.filter((v) => v === value).length,
-		})).filter(({ count }) => count > 1);
+  return values
+    .map((value, index) => ({
+      //returning a list of object of {value, index, count} structure
+      value,
+      index,
+      count: values.filter((v) => v === value).length,
+    }))
+    .filter(({ count }) => count > 1); //filter all count > 1
+}
+
+function initialPaint() {
+  currentDuplicatedDecorations.forEach((decoration) => {
+    decoration.dispose();
+  });
 }
 
 function paintDuplicatedValues(currentDuplicatedValues: Row[]) {
-	currentDuplicatedValues.forEach((line) => {
-		const currentIndex = line.index + 1;
+  currentDuplicatedValues.forEach((line) => {
+    const currentIndex = line.index + 1;
 
-		const decorationOptions: vscode.DecorationOptions[] = [
-			{
-				range: new vscode.Range(currentIndex, vscode.window.activeTextEditor?.document.lineAt(currentIndex).text.indexOf('"') ?? 0, currentIndex, vscode.window.activeTextEditor?.document.lineAt(currentIndex).text.length || 0),
-				hoverMessage: "Duplicate object value",
-			},
-		];
+    const decorationOptions: vscode.DecorationOptions[] = [
+      {
+        range: new vscode.Range(
+          currentIndex,
+          vscode.window.activeTextEditor?.document
+            .lineAt(currentIndex)
+            .text.indexOf('"') ?? 0,
+          currentIndex,
+          vscode.window.activeTextEditor?.document.lineAt(currentIndex).text
+            .length || 0
+        ),
+        hoverMessage: "Duplicate object value",
+      },
+    ];
 
-		const decorationType = vscode.window.createTextEditorDecorationType({
-			overviewRulerColor: 'red',
-			overviewRulerLane: vscode.OverviewRulerLane.Right,
-			light: {
-				outline: '1px solid red',
-			},
-			dark: {
-				outline: '1px solid red',
-			},
-		});
+    const decorationType = vscode.window.createTextEditorDecorationType({
+      overviewRulerColor: "red",
+      overviewRulerLane: vscode.OverviewRulerLane.Right,
+      light: {
+        outline: "1px solid red",
+      },
+      dark: {
+        outline: "1px solid red",
+      },
+    });
 
-		vscode.window.activeTextEditor?.setDecorations(
-			decorationType,
-			decorationOptions,
-		);
+    vscode.window.activeTextEditor?.setDecorations(
+      decorationType,
+      decorationOptions
+    );
 
-		currentDuplicatedDecorations.push(decorationType);
-	});
+    currentDuplicatedDecorations.push(decorationType);
+  });
 }
 
 export function activate(context: vscode.ExtensionContext) {
-	let disposable = vscode.commands.registerCommand('jason-lint.jasonLint', () => {
-		if (vscode.window.activeTextEditor?.document.languageId === 'json') {
-			const json = vscode.window.activeTextEditor?.document.getText();
+  let disposable = vscode.commands.registerCommand(
+    "jason-lint.jasonLint",
+    () => {
+      if (vscode.window.activeTextEditor?.document.languageId === "json") {
+        const json = vscode.window.activeTextEditor?.document.getText();
 
-			if (json) {
-				const parsed = JSON.parse(json);
+        if (json) {
+          const parsed = JSON.parse(json);
 
-				const duplicatedValues = getDuplicatedValues(Object.values(parsed));
+          const duplicatedValues = getDuplicatedValues(Object.values(parsed));
 
-				if (duplicatedValues.length > 0) {
-					currentDuplicatedDecorations.forEach((decoration) => {
-						decoration.dispose();
-					});
-				}
+          initialPaint();
 
-				if (duplicatedValues.length > 0) {
-					if (!alertShowed) {
-						vscode.window.showErrorMessage('JASON Lint: Duplicated values detected.');
+          if (duplicatedValues.length > 0) {
+            if (!alertShowed) {
+              vscode.window.showErrorMessage(
+                "JASON Lint: Duplicated values detected."
+              );
 
-						alertShowed = true;
-					}
-					
-					paintDuplicatedValues(duplicatedValues);
-				}
-			}
-		}
-	});
+              alertShowed = true;
+            }
 
-	vscode.commands.executeCommand('jason-lint.jasonLint');
+            paintDuplicatedValues(duplicatedValues);
+          }
+        }
+      }
+    }
+  );
 
-	vscode.workspace.onDidSaveTextDocument(() => {
-		vscode.commands.executeCommand('jason-lint.jasonLint');
-	});
+  vscode.commands.executeCommand("jason-lint.jasonLint");
 
-	vscode.workspace.onDidChangeTextDocument(() => {
-		vscode.commands.executeCommand('jason-lint.jasonLint');
-	});
+  vscode.workspace.onDidSaveTextDocument(() => {
+    vscode.commands.executeCommand("jason-lint.jasonLint");
+  });
 
-	vscode.workspace.onDidCreateFiles(() => {
-		vscode.commands.executeCommand('jason-lint.jasonLint');
-	});
+  vscode.workspace.onDidChangeTextDocument(() => {
+    vscode.commands.executeCommand("jason-lint.jasonLint");
+  });
 
-	vscode.workspace.onDidRenameFiles(() => {
-		vscode.commands.executeCommand('jason-lint.jasonLint');
-	});
+  vscode.workspace.onDidCreateFiles(() => {
+    vscode.commands.executeCommand("jason-lint.jasonLint");
+  });
 
-	vscode.window.onDidChangeActiveTextEditor(() => {
-		vscode.commands.executeCommand('jason-lint.jasonLint');
-	});
+  vscode.workspace.onDidRenameFiles(() => {
+    vscode.commands.executeCommand("jason-lint.jasonLint");
+  });
 
-	context.subscriptions.push(disposable);
+  vscode.window.onDidChangeActiveTextEditor(() => {
+    vscode.commands.executeCommand("jason-lint.jasonLint");
+  });
+
+  context.subscriptions.push(disposable);
 }
 
 export function deactivate() {}
