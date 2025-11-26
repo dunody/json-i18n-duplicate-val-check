@@ -67,7 +67,7 @@ function paintDuplicatedValues(currentDuplicatedValues: Row[]) {
 
 export function activate(context: vscode.ExtensionContext) {
   let disposable = vscode.commands.registerCommand(
-    "jason-lint.jasonLint",
+    "jasonlint",
     () => {
       if (vscode.window.activeTextEditor?.document.languageId === "json") {
         const json = vscode.window.activeTextEditor?.document.getText();
@@ -95,26 +95,26 @@ export function activate(context: vscode.ExtensionContext) {
     }
   );
 
-  vscode.commands.executeCommand("jason-lint.jasonLint");
+  vscode.commands.executeCommand("jasonlint");
 
   vscode.workspace.onDidSaveTextDocument(() => {
-    vscode.commands.executeCommand("jason-lint.jasonLint");
+    vscode.commands.executeCommand("jasonlint");
   });
 
   vscode.workspace.onDidChangeTextDocument(() => {
-    vscode.commands.executeCommand("jason-lint.jasonLint");
+    vscode.commands.executeCommand("jasonlint");
   });
 
   vscode.workspace.onDidCreateFiles(() => {
-    vscode.commands.executeCommand("jason-lint.jasonLint");
+    vscode.commands.executeCommand("jasonlint");
   });
 
   vscode.workspace.onDidRenameFiles(() => {
-    vscode.commands.executeCommand("jason-lint.jasonLint");
+    vscode.commands.executeCommand("jasonlint");
   });
 
   vscode.window.onDidChangeActiveTextEditor(() => {
-    vscode.commands.executeCommand("jason-lint.jasonLint");
+    vscode.commands.executeCommand("jasonlint");
   });
 
   context.subscriptions.push(disposable);
